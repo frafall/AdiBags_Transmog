@@ -14,20 +14,30 @@ local _, ns = ...
 local addon = LibStub('AceAddon-3.0'):GetAddon('AdiBags')
 local L = setmetatable({}, {__index = addon.L})
 
+local L_TRANSMOG      = 'Visuals'
+local L_FILTER_DESC   = 'Group new gear visuals together.'
+local L_ACC_TRANSMOG  = 'Account visuals'
+
+local L_ENABLE_LABEL  = 'Enable visual group'
+local L_TT_CATEGORY   = 'Check this if you want a section for new visuals.'
+
+local L_COMPLET_LABEL = 'Include completionist in group'
+local L_TT_COMPLETE   = 'Check this if you want to include existing visuals from new items.'
+
 do -- Localization
-	L["Transmog"] = "Visuals"
-        L["Account transmog"] = "Account visuals"
-        L['Put Transmog Stuff in their own sections.'] = "Put Transmog Stuff in their own sections."
-        L['Check this if you want a section for not collected transmog items.'] = "Check this if you want a section for not collected transmog items."
+	L[L_TRANSMOG] = L_TRANSMOG
+        L[L_ACC_TRANSMOG] = L_ACC_TRANSMOG
+        L[L_FILTER_DESC] = L_FILTER_DESC
+        L[L_TT_CATEGORY] = L_TT_CATEGORY
 
         --[[
 	local locale = GetLocale()
 	if locale == "frFR" then
-		L["Transmog"] = "Transmog"
+		L[L_TRANSMOG] = "Visuals"
 	elseif locale == "deDE" then
-		L["Transmog"] = "Transmog"
+		L[L_TRANSMOG] = "Visuals"
 	elseif locale == 'ptBR' then
-		L["Transmog"] = "Transmog"
+		L[L_TRANSMOG] = "Visuals"
 	end
         --]]
 end
@@ -35,12 +45,12 @@ end
 -- The filter itself
 
 local transmogFilter = addon:RegisterFilter("Transmog", 95, 'ABEvent-1.0')
-transmogFilter.uiName = L['Transmog']
-transmogFilter.uiDesc = L['Put Transmog Stuff in their own sections.']
+transmogFilter.uiName = L[L_TRANSMOG]
+transmogFilter.uiDesc = L[L_FILTER_DESC]
 
 function transmogFilter:OnInitialize()
 	self.db = addon.db:RegisterNamespace('Transmog', {
-		profile = { enableTransmog = true },
+		profile = { enableTransmog = true, completionist = false },
 		char = {	},
 	})
 end
@@ -186,7 +196,7 @@ function transmogFilter:Filter(slotData)
 
         -- Is the item an equippable item
         local itemName = _G["AdiTransmogTooltipTextLeft1"]:GetText()
-        dprintf("Item: %s", itemName)
+        --dprintf("Item: %s", itemName)
 
         if itemName and IsEquippableItem(itemName) and IsDressableItem(itemName) then
 
@@ -198,7 +208,7 @@ function transmogFilter:Filter(slotData)
 	    for i = 2,tip:NumLines() do
 		local r,g,b,t = getColorText(_G["AdiTransmogTooltipTextLeft"..i])
                 if t then
-                    dprintf("Left: (%d, %d, %d) %s", r,g,b,t)
+                    --dprintf("Left: (%d, %d, %d) %s", r,g,b,t)
 
                     -- Red text?
                     if r == 255 and g == 32 and b == 32 then
@@ -206,7 +216,8 @@ function transmogFilter:Filter(slotData)
                     end
 
                     -- Missing appearance?
-		    if t == TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN then
+		    if t == TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN or 
+                       self.db.profile.completionist and t == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
                         appearance_missing = true
                     end
 
@@ -218,7 +229,7 @@ function transmogFilter:Filter(slotData)
 		    -- XXX: Optimize, break on info found?
                 end
             end
-            dprintf("Left: missing %s, bound %s, usable %s", tostring(appearance_missing), tostring(item_bound), tostring(item_usable))
+            --dprintf("Left: missing %s, bound %s, usable %s", tostring(appearance_missing), tostring(item_bound), tostring(item_usable))
 
             -- Now, what are the results
             if appearance_missing then
@@ -227,22 +238,22 @@ function transmogFilter:Filter(slotData)
 	        for i = 2,tip:NumLines() do
 		    local r,g,b,t = getColorText(_G["AdiTransmogTooltipTextRight"..i])
                     if t then
-                        dprintf("Right: (%d, %d, %d) %s", r, g, b, t)
+                        --dprintf("Right: (%d, %d, %d) %s", r, g, b, t)
  
                         -- Red text?
                         if r == 255 and g == 32 and b == 32 then
-                            dprintf("Right side RED <%s>", t)
+                            --dprintf("Right side RED <%s>", t)
                             item_usable = false
                         end
                     end
                 end
-                dprintf("Right: missing %s, bound %s, usable %s", tostring(appearance_missing), tostring(item_bound), tostring(item_usable))
+                --dprintf("Right: missing %s, bound %s, usable %s", tostring(appearance_missing), tostring(item_bound), tostring(item_usable))
 
                 if item_usable then
-                    return L["Transmog"]
+                    return L[L_TRANSMOG]
          
                 elseif not item_bound then
-                    return L["Account transmog"]
+                    return L[L_ACC_TRANSMOG]
     
                 end
             end
@@ -254,8 +265,14 @@ end
 function transmogFilter:GetOptions()
 	return {
 		enableTransmog = {
-			name = L['Transmog'],
-			desc = L['Check this if you want a section for not collected transmog items.'],
+			name = L[L_ENABLE_LABEL],
+			desc = L[L_TT_CATEGORY],
+			type = 'toggle',
+			order = 60,
+		},
+		completionist = {
+			name = L[L_COMPLET_LABEL],
+			desc = L[L_TT_COMPLETE],
 			type = 'toggle',
 			order = 60,
 		},
