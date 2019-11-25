@@ -1,0 +1,11 @@
+package-as: AdiBags_Transmog
+enable-nolib-creation: no
+
+ignore:
+   - images
+
+manual-changelog: Changes.md
+
+license-output: LICENSE
+
+
