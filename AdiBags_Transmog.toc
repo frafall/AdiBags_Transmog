@@ -1,0 +1,10 @@
+## Interface: 70000
+
+## Title: AdiBags - Filter for Transmog
+## Notes: Adds Transmog filters to AdiBags.
+## Author: Frafall, originally by Dia
+## Version: v1.0
+
+## Dependencies: AdiBags
+
+AdiBags_Transmog.lua
