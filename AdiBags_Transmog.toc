@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80205
 
 ## Title: AdiBags - Filter for Transmog
 ## Notes: Adds Transmog filters to AdiBags.
