@@ -1,8 +1,8 @@
-## Interface: 80205
+## Interface: 100002
 
 ## Title: AdiBags - Filter for Transmog
 ## Notes: Adds Transmog filters to AdiBags.
-## Author: Frafall, originally by Dia
+## Author: Frafall, originally by Dia, updated for 10.0.2 by Fentara
 ## Version: v1.0
 
 ## Dependencies: AdiBags
