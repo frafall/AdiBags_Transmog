@@ -198,7 +198,7 @@ function transmogFilter:Filter(slotData)
         local itemName = _G["AdiTransmogTooltipTextLeft1"]:GetText()
         --dprintf("Item: %s", itemName)
 
-        if itemName and IsEquippableItem(itemName) and IsDressableItem(itemName) then
+        if itemName and IsEquippableItem(itemName) and C_Item.IsDressableItemByID(itemName) then
 
             local appearance_missing = false
             local item_usable = itemUsableByCharacter(itemName) 
